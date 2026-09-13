@@ -1,0 +1,3777 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Study Squad — AI Study Coach</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #070b14;
+      --panel: #0d1321;
+      --panel2: #111827;
+      --border: rgba(255, 255, 255, .08);
+      --text: #f5f7fb;
+      --muted: #8d98aa;
+      --primary: #6366f1;
+      --primary2: #8b5cf6;
+      --cyan: #22d3ee;
+      --green: #22c55e;
+      --orange: #f59e0b;
+      --danger: #ef4444;
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at 10% 10%, rgba(99, 102, 241, .15), transparent 28%),
+        radial-gradient(circle at 90% 80%, rgba(34, 211, 238, .08), transparent 25%),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, sans-serif;
+      min-height: 100vh;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* ================= AUTH ================= */
+
+    .auth-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 440px;
+      background: rgba(13, 19, 33, .9);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 35px;
+      box-shadow: 0 25px 80px rgba(0, 0, 0, .4);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .logo-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 23px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--cyan));
+    }
+
+    .logo h1 {
+      font-family: Sora;
+      font-size: 20px;
+    }
+
+    .logo span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .auth-card h2 {
+      font-family: Sora;
+      margin-bottom: 8px;
+    }
+
+    .auth-subtitle {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 25px;
+    }
+
+    .input-group {
+      margin-bottom: 16px;
+    }
+
+    .input-group label {
+      display: block;
+      color: #c8d0dc;
+      font-size: 13px;
+      margin-bottom: 7px;
+    }
+
+    .input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: #090f1c;
+      color: var(--text);
+      border-radius: 12px;
+      padding: 13px 14px;
+      outline: none;
+      transition: .2s;
+    }
+
+    .input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: rgba(99, 102, 241, .8);
+    }
+
+    .primary-btn {
+      width: 100%;
+      border: 0;
+      border-radius: 12px;
+      padding: 14px;
+      color: white;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--primary2));
+    }
+
+    .secondary-btn {
+      border: 1px solid var(--border);
+      background: #111827;
+      color: white;
+      border-radius: 11px;
+      padding: 11px 15px;
+    }
+
+    .text-btn {
+      background: none;
+      border: 0;
+      color: #9ea8ff;
+      font-weight: 600;
+    }
+
+    .auth-switch {
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 20px;
+    }
+
+    /* ================= APP ================= */
+
+    .app {
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 240px;
+      border-right: 1px solid var(--border);
+      background: rgba(7, 11, 20, .95);
+      padding: 22px 15px;
+      z-index: 20;
+    }
+
+    .sidebar-logo {
+      padding: 8px 10px 25px;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .nav-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      padding: 12px 13px;
+      border-radius: 12px;
+      text-align: left;
+    }
+
+    .nav-btn:hover,
+    .nav-btn.active {
+      background: rgba(99, 102, 241, .13);
+      color: white;
+    }
+
+    .sidebar-bottom {
+      position: absolute;
+      bottom: 20px;
+      left: 15px;
+      right: 15px;
+    }
+
+    .user-mini {
+      border: 1px solid var(--border);
+      background: #0d1321;
+      border-radius: 14px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--cyan));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    .user-mini strong {
+      font-size: 13px;
+    }
+
+    .user-mini small {
+      display: block;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .main {
+      margin-left: 240px;
+      padding: 30px;
+      max-width: 1500px;
+    }
+
+    .mobile-header {
+      display: none;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .page-title {
+      font-family: Sora;
+      font-size: 28px;
+      margin-bottom: 6px;
+    }
+
+    .page-subtitle {
+      color: var(--muted);
+      margin-bottom: 25px;
+    }
+
+    /* ================= CARDS ================= */
+
+    .card {
+      background: rgba(13, 19, 33, .88);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .stat-value {
+      font-family: Sora;
+      font-size: 25px;
+    }
+
+    .stat-icon {
+      font-size: 23px;
+      margin-bottom: 12px;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .card-title {
+      font-family: Sora;
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+
+    .progress-ring {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      margin: 15px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at center, var(--panel) 57%, transparent 58%),
+        conic-gradient(var(--primary) var(--progress, 0%), #20293a 0);
+    }
+
+    .progress-ring span {
+      font-family: Sora;
+      font-size: 25px;
+    }
+
+    .week-bars {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 9px;
+      align-items: end;
+      height: 160px;
+    }
+
+    .day-bar {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      height: 100%;
+      justify-content: end;
+    }
+
+    .bar {
+      width: 100%;
+      max-width: 28px;
+      min-height: 5px;
+      background: linear-gradient(to top, var(--primary), var(--cyan));
+      border-radius: 7px 7px 3px 3px;
+    }
+
+    .day-bar small {
+      color: var(--muted);
+    }
+
+    /* ================= ONBOARDING ================= */
+
+    .onboarding-screen {
+      position: fixed;
+      inset: 0;
+      background: #070b14;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .onboarding-card {
+      width: 100%;
+      max-width: 650px;
+      background: #0d1321;
+      border: 1px solid var(--border);
+      border-radius: 25px;
+      padding: 30px;
+    }
+
+    .onboarding-progress {
+      height: 5px;
+      background: #20283a;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 18px 0 25px;
+    }
+
+    .onboarding-progress div {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--cyan));
+      width: 25%;
+      transition: .3s;
+    }
+
+    .onboarding-step {
+      display: none;
+    }
+
+    .onboarding-step.active {
+      display: block;
+    }
+
+    .choice-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .choice {
+      padding: 15px;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      background: #0a101d;
+      color: #cdd5e2;
+      text-align: left;
+    }
+
+    .choice.selected {
+      border-color: var(--primary);
+      background: rgba(99, 102, 241, .15);
+      color: white;
+    }
+
+    .onboarding-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 25px;
+      gap: 10px;
+    }
+
+    .onboarding-actions button {
+      flex: 1;
+    }
+
+    /* ================= PROFILE ================= */
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .profile-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 25px;
+      background: linear-gradient(135deg, var(--primary), var(--cyan));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      font-weight: 700;
+    }
+
+    .profile-name {
+      font-family: Sora;
+      font-size: 25px;
+    }
+
+    .profile-email {
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    .profile-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    /* ================= SQUADS ================= */
+
+    .squad-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .squad-card {
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .squad-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(99, 102, 241, .4);
+    }
+
+    .squad-name {
+      font-family: Sora;
+      font-size: 18px;
+      margin-bottom: 7px;
+    }
+
+    .squad-goal {
+      color: var(--muted);
+      font-size: 13px;
+      min-height: 40px;
+    }
+
+    .member-count {
+      color: #b6c0d0;
+      margin-top: 15px;
+    }
+
+    /* ================= CHAT ================= */
+
+    .chat-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 15px;
+      height: calc(100vh - 125px);
+      min-height: 550px;
+    }
+
+    .chat-sidebar {
+      overflow: auto;
+    }
+
+    .chat-squad-item {
+      padding: 13px;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-bottom: 6px;
+      border: 1px solid transparent;
+    }
+
+    .chat-squad-item:hover,
+    .chat-squad-item.active {
+      background: rgba(99, 102, 241, .13);
+      border-color: var(--border);
+    }
+
+    .chat-window {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .chat-header {
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 10px;
+    }
+
+    .chat-header h3 {
+      font-family: Sora;
+    }
+
+    .chat-header small {
+      color: var(--muted);
+    }
+
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 4px;
+    }
+
+    .message {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .message.mine {
+      flex-direction: row-reverse;
+    }
+
+    .message-content {
+      max-width: 70%;
+    }
+
+    .message-name {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .message-bubble {
+      background: #172033;
+      border: 1px solid var(--border);
+      padding: 10px 13px;
+      border-radius: 14px;
+      line-height: 1.45;
+      word-break: break-word;
+    }
+
+    .mine .message-bubble {
+      background: rgba(99, 102, 241, .22);
+    }
+
+    .chat-input {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .chat-input input {
+      flex: 1;
+    }
+
+    /* ================= AI ================= */
+
+    .ai-chat {
+      height: 500px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ai-messages {
+      flex: 1;
+      overflow: auto;
+      padding: 5px;
+    }
+
+    .ai-message {
+      margin-bottom: 15px;
+      display: flex;
+    }
+
+    .ai-message.user {
+      justify-content: flex-end;
+    }
+
+    .ai-bubble {
+      max-width: 75%;
+      padding: 12px 15px;
+      border-radius: 15px;
+      background: #172033;
+      line-height: 1.5;
+    }
+
+    .ai-message.user .ai-bubble {
+      background: rgba(99, 102, 241, .25);
+    }
+
+    /* ================= TABLE/LISTS ================= */
+
+    .info-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 9px;
+      border-radius: 20px;
+      font-size: 11px;
+      background: rgba(99, 102, 241, .13);
+      color: #b9bdff;
+    }
+
+    .green {
+      color: var(--green);
+    }
+
+    .orange {
+      color: var(--orange);
+    }
+
+    /* ================= TOAST ================= */
+
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      background: #121a2a;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 13px 17px;
+      z-index: 300;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, .35);
+      max-width: 330px;
+    }
+
+    .toast.err {
+      border-color: rgba(239, 68, 68, .5);
+    }
+
+    /* ================= RESPONSIVE ================= */
+
+    @media(max-width:1000px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .squad-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media(max-width:760px) {
+      .sidebar {
+        display: none;
+      }
+
+      .main {
+        margin-left: 0;
+        padding: 70px 15px 20px;
+      }
+
+      .mobile-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 58px;
+        background: rgba(7, 11, 20, .95);
+        border-bottom: 1px solid var(--border);
+        z-index: 30;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 15px;
+      }
+
+      .mobile-header strong {
+        font-family: Sora;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .squad-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .chat-layout {
+        grid-template-columns: 1fr;
+        height: auto;
+        min-height: 0;
+      }
+
+      .chat-sidebar {
+        max-height: 170px;
+      }
+
+      .chat-window {
+        height: 500px;
+      }
+
+      .choice-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .profile-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media(max-width:450px) {
+      .auth-card {
+        padding: 25px 20px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .page-title {
+        font-size: 23px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ========================================================= -->
+  <!-- AUTH -->
+  <!-- ========================================================= -->
+
+  <div id="authScreen" class="auth-screen">
+
+    <div class="auth-card">
+
+      <div class="logo">
+        <div class="logo-icon">S</div>
+        <div>
+          <h1>Study Squad</h1>
+          <span>AI-powered study community</span>
+        </div>
+      </div>
+
+      <!-- LOGIN -->
+
+      <div id="loginForm">
+
+        <h2>Welcome back 👋</h2>
+        <p class="auth-subtitle">
+          Continue your study journey.
+        </p>
+
+        <div class="input-group">
+          <label>Email</label>
+          <input id="loginEmail" class="input" type="email" placeholder="you@example.com">
+        </div>
+
+        <div class="input-group">
+          <label>Password</label>
+          <input id="loginPassword" class="input" type="password" placeholder="••••••••">
+        </div>
+
+        <button class="primary-btn" onclick="login()">
+          Login
+        </button>
+
+        <div class="auth-switch">
+          Don't have an account?
+          <button class="text-btn" onclick="showRegister()">
+            Create account
+          </button>
+        </div>
+
+      </div>
+
+      <!-- REGISTER -->
+
+      <div id="registerForm" class="hidden">
+
+        <h2>Create your account 🚀</h2>
+
+        <p class="auth-subtitle">
+          Start studying smarter with Study Squad.
+        </p>
+
+        <div class="input-group">
+          <label>Full name</label>
+          <input id="registerName" class="input" placeholder="Azimbek">
+        </div>
+
+        <div class="input-group">
+          <label>Email</label>
+          <input id="registerEmail" class="input" type="email" placeholder="you@example.com">
+        </div>
+
+        <div class="input-group">
+          <label>Password</label>
+          <input id="registerPassword" class="input" type="password" placeholder="••••••••">
+        </div>
+
+        <button class="primary-btn" onclick="register()">
+          Create account
+        </button>
+
+        <div class="auth-switch">
+          Already have an account?
+          <button class="text-btn" onclick="showLogin()">
+            Login
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ========================================================= -->
+  <!-- ONBOARDING -->
+  <!-- ========================================================= -->
+
+  <div id="onboardingScreen" class="onboarding-screen hidden">
+
+    <div class="onboarding-card">
+
+      <div class="logo">
+        <div class="logo-icon">S</div>
+        <div>
+          <h1>Let's personalize Study Squad</h1>
+          <span>Your answers help us build better study tasks.</span>
+        </div>
+      </div>
+
+      <div class="onboarding-progress">
+        <div id="onboardingProgress"></div>
+      </div>
+
+      <!-- STEP 1 -->
+
+      <div class="onboarding-step active" data-step="1">
+
+        <h2>What's your main goal?</h2>
+
+        <p class="auth-subtitle">
+          Choose what you want to achieve.
+        </p>
+
+        <div class="choice-grid">
+
+          <button class="choice" data-group="goal" data-value="IELTS">
+            🎯 IELTS
+          </button>
+
+          <button class="choice" data-group="goal" data-value="School">
+            📚 School
+          </button>
+
+          <button class="choice" data-group="goal" data-value="Programming">
+            💻 Programming
+          </button>
+
+          <button class="choice" data-group="goal" data-value="University">
+            🎓 University
+          </button>
+
+        </div>
+
+        <input id="customGoal" class="input" style="margin-top:15px" placeholder="Or write your own goal...">
+
+      </div>
+
+      <!-- STEP 2 -->
+
+      <div class="onboarding-step" data-step="2">
+
+        <h2>What do you study?</h2>
+
+        <p class="auth-subtitle">
+          Select your main subject.
+        </p>
+
+        <div class="choice-grid">
+
+          <button class="choice" data-group="subject" data-value="English">
+            🇬🇧 English
+          </button>
+
+          <button class="choice" data-group="subject" data-value="Mathematics">
+            📐 Mathematics
+          </button>
+
+          <button class="choice" data-group="subject" data-value="Programming">
+            💻 Programming
+          </button>
+
+          <button class="choice" data-group="subject" data-value="Science">
+            🔬 Science
+          </button>
+
+          <button class="choice" data-group="subject" data-value="Other">
+            ✨ Other
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- STEP 3 -->
+
+      <div class="onboarding-step" data-step="3">
+
+        <h2>What's your current level?</h2>
+
+        <p class="auth-subtitle">
+          This helps AI Coach personalize tasks.
+        </p>
+
+        <div class="choice-grid">
+
+          <button class="choice" data-group="level" data-value="Beginner">
+            🌱 Beginner
+          </button>
+
+          <button class="choice" data-group="level" data-value="Intermediate">
+            📈 Intermediate
+          </button>
+
+          <button class="choice" data-group="level" data-value="Advanced">
+            🚀 Advanced
+          </button>
+
+          <button class="choice" data-group="level" data-value="Expert">
+            🧠 Expert
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- STEP 4 -->
+
+      <div class="onboarding-step" data-step="4">
+
+        <h2>How much can you study daily?</h2>
+
+        <p class="auth-subtitle">
+          Choose a realistic target.
+        </p>
+
+        <div class="choice-grid">
+
+          <button class="choice" data-group="minutes" data-value="30">
+            30 minutes
+          </button>
+
+          <button class="choice" data-group="minutes" data-value="60">
+            1 hour
+          </button>
+
+          <button class="choice" data-group="minutes" data-value="120">
+            2 hours
+          </button>
+
+          <button class="choice" data-group="minutes" data-value="180">
+            3+ hours
+          </button>
+
+        </div>
+
+        <div class="input-group" style="margin-top:18px">
+
+          <label>Interests</label>
+
+          <input id="interestsInput" class="input" placeholder="AI, English, coding...">
+
+        </div>
+
+      </div>
+
+      <div class="onboarding-actions">
+
+        <button id="onboardingBack" class="secondary-btn" onclick="previousOnboarding()">
+          Back
+        </button>
+
+        <button id="onboardingNext" class="primary-btn" onclick="nextOnboarding()">
+          Continue
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ========================================================= -->
+  <!-- APP -->
+  <!-- ========================================================= -->
+
+  <div id="app" class="app hidden">
+
+    <aside class="sidebar">
+
+      <div class="sidebar-logo">
+
+        <div class="logo">
+          <div class="logo-icon">S</div>
+          <div>
+            <h1>Study Squad</h1>
+            <span>Study smarter</span>
+          </div>
+        </div>
+
+      </div>
+
+      <nav class="nav">
+
+        <button class="nav-btn active" data-page="dashboard">
+          🏠 Dashboard
+        </button>
+
+        <button class="nav-btn" data-page="coach">
+          🤖 AI Coach
+        </button>
+
+        <button class="nav-btn" data-page="progress">
+          📊 Progress
+        </button>
+
+        <button class="nav-btn" data-page="squads">
+          👥 Squads
+        </button>
+
+        <button class="nav-btn" data-page="profile">
+          👤 Profile
+        </button>
+
+        <button class="nav-btn" data-page="plans">
+          💎 Plans
+        </button>
+
+      </nav>
+
+      <div class="sidebar-bottom">
+
+        <div class="user-mini">
+
+          <div id="sideAvatar" class="avatar">
+            A
+          </div>
+
+          <div>
+            <strong id="sideName">Student</strong>
+            <small id="sidePlan">Basic</small>
+          </div>
+
+        </div>
+
+      </div>
+
+    </aside>
+
+
+    <div class="mobile-header">
+
+      <strong>Study Squad</strong>
+
+      <button class="secondary-btn" onclick="logout()">
+        Logout
+      </button>
+
+    </div>
+
+
+    <main class="main">
+
+      <!-- ================================================= -->
+      <!-- DASHBOARD -->
+      <!-- ================================================= -->
+
+      <section id="page-dashboard" class="page active">
+
+        <h1 class="page-title">
+          Good to see you, <span id="dashboardName">Student</span> 👋
+        </h1>
+
+        <p class="page-subtitle">
+          Let's make today productive.
+        </p>
+
+
+        <div class="grid stats-grid">
+
+          <div class="card">
+
+            <div class="stat-icon">🔥</div>
+
+            <div class="stat-label">
+              Current streak
+            </div>
+
+            <div class="stat-value">
+              <span id="streakValue">0</span>
+              days
+            </div>
+
+          </div>
+
+
+          <div class="card">
+
+            <div class="stat-icon">🪙</div>
+
+            <div class="stat-label">
+              Coins
+            </div>
+
+            <div class="stat-value">
+              <span id="coinValue">0</span>
+            </div>
+
+          </div>
+
+
+          <div class="card">
+
+            <div class="stat-icon">📈</div>
+
+            <div class="stat-label">
+              Weekly average
+            </div>
+
+            <div class="stat-value">
+              <span id="weeklyValue">0</span>%
+            </div>
+
+          </div>
+
+
+          <div class="card">
+
+            <div class="stat-icon">💎</div>
+
+            <div class="stat-label">
+              Plan
+            </div>
+
+            <div class="stat-value" id="planValue">
+              Basic
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="dashboard-grid">
+
+          <div class="card">
+
+            <div class="card-title">
+              📅 Weekly progress
+            </div>
+
+            <div id="progressRing" class="progress-ring" style="--progress:0%">
+              <span id="progressRingValue">
+                0%
+              </span>
+            </div>
+
+            <div id="weekBars" class="week-bars"></div>
+
+          </div>
+
+
+          <div class="card">
+
+            <div class="card-title">
+              🤖 AI Coach
+            </div>
+
+            <p id="dailyTip" style="
+                            color:#cdd5e2;
+                            line-height:1.6;
+                            margin-bottom:20px;
+                        ">
+              Loading your personalized tip...
+            </p>
+
+            <button class="primary-btn" onclick="navigate('coach')">
+              Talk to AI Coach
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div class="card" style="margin-top:16px">
+
+          <div class="card-title">
+            🎯 Your study goal
+          </div>
+
+          <div id="dashboardGoal">
+            Complete your onboarding to see your goal.
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ================================================= -->
+      <!-- AI COACH -->
+      <!-- ================================================= -->
+
+      <section id="page-coach" class="page">
+
+        <h1 class="page-title">
+          AI Coach 🤖
+        </h1>
+
+        <p class="page-subtitle">
+          Your personal AI study assistant.
+        </p>
+
+        <div class="card ai-chat">
+
+          <div id="aiMessages" class="ai-messages">
+
+            <div class="ai-message">
+
+              <div class="ai-bubble">
+                Hi! I'm your Study Squad AI Coach. 👋
+                <br><br>
+                Tell me what you're studying today.
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class="chat-input">
+
+            <input id="aiInput" class="input" placeholder="Ask your AI Coach..."
+              onkeydown="if(event.key==='Enter') sendAIMessage()">
+
+            <button class="primary-btn" style="width:auto" onclick="sendAIMessage()">
+              Send
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ================================================= -->
+      <!-- PROGRESS -->
+      <!-- ================================================= -->
+
+      <section id="page-progress" class="page">
+
+        <h1 class="page-title">
+          Your Progress 📊
+        </h1>
+
+        <p class="page-subtitle">
+          Track your consistency.
+        </p>
+
+        <div class="grid stats-grid">
+
+          <div class="card">
+            <div class="stat-label">
+              Weekly average
+            </div>
+            <div class="stat-value">
+              <span id="progressAverage">0</span>%
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="stat-label">
+              Streak
+            </div>
+            <div class="stat-value">
+              <span id="progressStreak">0</span> 🔥
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="stat-label">
+              Coins earned
+            </div>
+            <div class="stat-value">
+              <span id="progressCoins">0</span> 🪙
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="stat-label">
+              Goal
+            </div>
+            <div class="stat-value">
+              <span id="progressGoal">—</span>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="card" style="margin-top:16px">
+
+          <div class="card-title">
+            This week
+          </div>
+
+          <div id="progressWeekBars" class="week-bars"></div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ================================================= -->
+      <!-- SQUADS -->
+      <!-- ================================================= -->
+
+      <section id="page-squads" class="page">
+
+        <h1 class="page-title">
+          Squads 👥
+        </h1>
+
+        <p class="page-subtitle">
+          Study together. Stay accountable.
+        </p>
+
+
+        <div style="
+                display:flex;
+                gap:10px;
+                margin-bottom:18px;
+                flex-wrap:wrap;
+            ">
+
+          <button class="primary-btn" style="width:auto" onclick="showCreateSquad()">
+            + Create Squad
+          </button>
+
+          <button class="secondary-btn" onclick="loadSquads()">
+            ↻ Refresh
+          </button>
+
+        </div>
+
+
+        <div id="createSquadBox" class="card hidden" style="margin-bottom:18px">
+
+          <div class="card-title">
+            Create a new squad
+          </div>
+
+          <div class="input-group">
+
+            <label>Squad name</label>
+
+            <input id="squadName" class="input" placeholder="IELTS Warriors">
+
+          </div>
+
+          <div class="input-group">
+
+            <label>Goal</label>
+
+            <input id="squadGoal" class="input" placeholder="Reach IELTS 7.0 in 60 days">
+
+          </div>
+
+          <div style="display:flex;gap:8px">
+
+            <button class="primary-btn" style="width:auto" onclick="createSquad()">
+              Create
+            </button>
+
+            <button class="secondary-btn" onclick="showCreateSquad()">
+              Cancel
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div id="squadGrid" class="squad-grid"></div>
+
+
+        <!-- CHAT -->
+
+        <div id="squadChatSection" class="card hidden" style="margin-top:20px">
+
+          <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    margin-bottom:15px;
+                ">
+
+            <div>
+              <div class="card-title" style="margin-bottom:4px">
+                💬 <span id="chatSquadName">Squad Chat</span>
+              </div>
+
+              <small style="color:var(--muted)">
+                Real-time squad conversation
+              </small>
+            </div>
+
+            <button class="secondary-btn" onclick="closeChat()">
+              Close
+            </button>
+
+          </div>
+
+
+          <div class="chat-layout" style="height:600px">
+
+            <div class="card chat-sidebar">
+
+              <div class="card-title">
+                Your Squads
+              </div>
+
+              <div id="chatSquadList"></div>
+
+            </div>
+
+
+            <div class="card chat-window">
+
+              <div class="chat-header">
+
+                <h3 id="activeChatName">
+                  Select a squad
+                </h3>
+
+                <small id="activeChatGoal">
+                  —
+                </small>
+
+              </div>
+
+
+              <div id="messages" class="messages">
+
+                <div style="
+                                text-align:center;
+                                color:var(--muted);
+                                margin-top:40px;
+                            ">
+                  Select a squad to start chatting.
+                </div>
+
+              </div>
+
+
+              <div class="chat-input">
+
+                <input id="messageInput" class="input" placeholder="Write a message..." onkeydown="
+                                    if(event.key==='Enter'){
+                                        sendMessage();
+                                    }
+                                ">
+
+                <button class="primary-btn" style="width:auto" onclick="sendMessage()">
+                  ➤
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ================================================= -->
+      <!-- PROFILE -->
+      <!-- ================================================= -->
+
+      <section id="page-profile" class="page">
+
+        <h1 class="page-title">
+          Profile 👤
+        </h1>
+
+        <p class="page-subtitle">
+          Your Study Squad identity.
+        </p>
+
+
+        <div class="card">
+
+          <div class="profile-header">
+
+            <div id="profileAvatar" class="profile-avatar">
+              A
+            </div>
+
+            <div>
+
+              <div id="profileName" class="profile-name">
+                Student
+              </div>
+
+              <div id="profileEmail" class="profile-email">
+                —
+              </div>
+
+              <div style="margin-top:8px">
+                <span id="profilePlan" class="badge">
+                  Basic
+                </span>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="grid profile-grid" style="margin-top:16px">
+
+          <div class="card">
+
+            <div class="stat-label">
+              Main goal
+            </div>
+
+            <div id="profileGoal" class="stat-value">
+              —
+            </div>
+
+          </div>
+
+          <div class="card">
+
+            <div class="stat-label">
+              Subject
+            </div>
+
+            <div id="profileSubject" class="stat-value">
+              —
+            </div>
+
+          </div>
+
+          <div class="card">
+
+            <div class="stat-label">
+              Daily study
+            </div>
+
+            <div class="stat-value">
+              <span id="profileMinutes">60</span> min
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="card" style="margin-top:16px">
+
+          <div class="card-title">
+            ✏️ Edit profile
+          </div>
+
+          <div class="input-group">
+
+            <label>Full name</label>
+
+            <input id="editFullName" class="input">
+
+          </div>
+
+          <button class="primary-btn" style="width:auto" onclick="updateProfile()">
+            Save changes
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <!-- ================================================= -->
+      <!-- PLANS -->
+      <!-- ================================================= -->
+
+      <section id="page-plans" class="page">
+
+        <h1 class="page-title">
+          Plans 💎
+        </h1>
+
+        <p class="page-subtitle">
+          Upgrade your Study Squad experience.
+        </p>
+
+        <div id="plansGrid" class="squad-grid">
+
+          <div class="card">
+            Loading plans...
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+
+  <div id="toast" class="toast hidden"></div>
+
+
+  <script>
+
+    /* =========================================================
+       CONFIG
+    ========================================================= */
+
+    const API_BASE =
+      "https://study-squad-backend-5sqw.onrender.com";
+
+    const TOKEN_KEY = "ss_token";
+
+    const state = {
+
+      token:
+        localStorage.getItem(TOKEN_KEY) || "",
+
+      user: null,
+
+      onboarding: null,
+
+      weekly: null,
+
+      balance: null,
+
+      plan: null,
+
+      squads: [],
+
+      activeSquad: null,
+
+      socket: null,
+
+      onboardingStep: 1,
+
+      onboardingData: {
+        goal: "",
+        study_subject: "",
+        current_level: "",
+        daily_study_minutes: 60,
+        interests: []
+      }
+
+    };
+
+
+    /* =========================================================
+       HELPERS
+    ========================================================= */
+
+    const $ = id =>
+      document.getElementById(id);
+
+
+    function escapeHTML(value) {
+
+      return String(value ?? "")
+        .replace(/[&<>"']/g, c => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;"
+        }[c]));
+
+    }
+
+
+    function toast(message, error = false) {
+
+      const el = $("toast");
+
+      el.textContent = message;
+
+      el.className =
+        "toast" + (error ? " err" : "");
+
+      setTimeout(() => {
+        el.classList.add("hidden");
+      }, 3500);
+
+    }
+
+
+    async function api(path, options = {}) {
+
+      const headers = options.headers || {};
+
+      if (
+        !(options.body instanceof FormData)
+        && options.body
+      ) {
+
+        headers["Content-Type"] =
+          "application/json";
+
+      }
+
+      if (state.token) {
+
+        headers["Authorization"] =
+          "Bearer " + state.token;
+
+      }
+
+      const response =
+        await fetch(
+          API_BASE + path,
+          {
+            ...options,
+            headers
+          }
+        );
+
+      if (!response.ok) {
+
+        let message =
+          "Request failed";
+
+        try {
+
+          const data =
+            await response.json();
+
+          message =
+            data.detail ||
+            data.message ||
+            message;
+
+        } catch { }
+
+        throw new Error(message);
+
+      }
+
+      if (response.status === 204) {
+
+        return null;
+
+      }
+
+      return response.json();
+
+    }
+
+
+    /* =========================================================
+       AUTH
+    ========================================================= */
+
+    function showRegister() {
+
+      $("loginForm")
+        .classList.add("hidden");
+
+      $("registerForm")
+        .classList.remove("hidden");
+
+    }
+
+
+    function showLogin() {
+
+      $("registerForm")
+        .classList.add("hidden");
+
+      $("loginForm")
+        .classList.remove("hidden");
+
+    }
+
+
+    async function register() {
+
+      const full_name =
+        $("registerName").value.trim();
+
+      const email =
+        $("registerEmail").value.trim();
+
+      const password =
+        $("registerPassword").value;
+
+      if (!full_name || !email || !password) {
+
+        toast(
+          "Barcha maydonlarni to‘ldiring.",
+          true
+        );
+
+        return;
+
+      }
+
+      try {
+
+        await api(
+          "/auth/register",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              full_name,
+              email,
+              password
+            })
+          }
+        );
+
+        toast(
+          "Account yaratildi! Endi login qiling."
+        );
+
+        $("loginEmail").value =
+          email;
+
+        showLogin();
+
+      } catch (error) {
+
+        toast(
+          error.message,
+          true
+        );
+
+      }
+
+    }
+
+
+    async function login() {
+
+      const email =
+        $("loginEmail").value.trim();
+
+      const password =
+        $("loginPassword").value;
+
+      if (!email || !password) {
+
+        toast(
+          "Email va passwordni kiriting.",
+          true
+        );
+
+        return;
+
+      }
+
+      try {
+
+        const form =
+          new FormData();
+
+        form.append(
+          "username",
+          email
+        );
+
+        form.append(
+          "password",
+          password
+        );
+
+        const data =
+          await api(
+            "/auth/login",
+            {
+              method: "POST",
+              body: form
+            }
+          );
+
+        state.token =
+          data.access_token;
+
+        localStorage.setItem(
+          TOKEN_KEY,
+          state.token
+        );
+
+        await enterApp();
+
+      } catch (error) {
+
+        toast(
+          error.message,
+          true
+        );
+
+      }
+
+    }
+
+
+    async function enterApp() {
+
+      $("authScreen")
+        .classList.add("hidden");
+
+      $("app")
+        .classList.remove("hidden");
+
+      await loadUser();
+
+      await checkOnboarding();
+
+      await loadDashboard();
+
+      loadSquads();
+
+    }
+
+
+    function logout() {
+
+      if (state.socket) {
+
+        try {
+          state.socket.close();
+        } catch { }
+
+      }
+
+      localStorage.removeItem(
+        TOKEN_KEY
+      );
+
+      state.token = "";
+
+      state.user = null;
+
+      $("app")
+        .classList.add("hidden");
+
+      $("onboardingScreen")
+        .classList.add("hidden");
+
+      $("authScreen")
+        .classList.remove("hidden");
+
+      showLogin();
+
+    }
+
+
+    /* =========================================================
+       USER
+    ========================================================= */
+
+    async function loadUser() {
+
+      state.user =
+        await api("/users/me");
+
+      updateUserUI();
+
+    }
+
+
+    function updateUserUI() {
+
+      if (!state.user)
+        return;
+
+      const name =
+        state.user.full_name ||
+        "Student";
+
+      $("dashboardName")
+        .textContent =
+        name.split(" ")[0];
+
+      $("sideName")
+        .textContent =
+        name;
+
+      $("sidePlan")
+        .textContent =
+        state.user.is_premium
+          ? "Premium"
+          : (
+            state.user.subscription_tier
+            || "Basic"
+          );
+
+      const initial =
+        name.charAt(0).toUpperCase();
+
+      $("sideAvatar")
+        .textContent =
+        initial;
+
+      $("profileAvatar")
+        .textContent =
+        initial;
+
+      $("profileName")
+        .textContent =
+        name;
+
+      $("profileEmail")
+        .textContent =
+        state.user.email || "—";
+
+      $("editFullName")
+        .value =
+        name;
+
+      $("profilePlan")
+        .textContent =
+        state.user.is_premium
+          ? "Premium"
+          : (
+            state.user.subscription_tier
+            || "Basic"
+          );
+
+    }
+
+
+    /* =========================================================
+       ONBOARDING
+    ========================================================= */
+
+    async function checkOnboarding() {
+
+      try {
+
+        const data =
+          await api(
+            "/onboarding/me"
+          );
+
+        state.onboarding =
+          data;
+
+        if (!data.completed) {
+
+          $("onboardingScreen")
+            .classList.remove("hidden");
+
+          updateOnboardingUI();
+
+        } else {
+
+          $("onboardingScreen")
+            .classList.add("hidden");
+
+        }
+
+      } catch (error) {
+
+        console.error(
+          "Onboarding error:",
+          error
+        );
+
+      }
+
+    }
+
+
+    function updateOnboardingUI() {
+
+      document
+        .querySelectorAll(".onboarding-step")
+        .forEach(step => {
+
+          step.classList.toggle(
+            "active",
+            Number(
+              step.dataset.step
+            ) === state.onboardingStep
+          );
+
+        });
+
+      $("onboardingProgress")
+        .style.width =
+        (state.onboardingStep / 4 * 100) + "%";
+
+      $("onboardingBack")
+        .style.visibility =
+        state.onboardingStep === 1
+          ? "hidden"
+          : "visible";
+
+      $("onboardingNext")
+        .textContent =
+        state.onboardingStep === 4
+          ? "Finish 🚀"
+          : "Continue";
+
+    }
+
+
+    document
+      .querySelectorAll(".choice")
+      .forEach(button => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            const group =
+              button.dataset.group;
+
+            const value =
+              button.dataset.value;
+
+            document
+              .querySelectorAll(
+                `.choice[data-group="${group}"]`
+              )
+              .forEach(x =>
+                x.classList.remove(
+                  "selected"
+                )
+              );
+
+            button.classList.add(
+              "selected"
+            );
+
+            state.onboardingData[
+              group === "minutes"
+                ? "daily_study_minutes"
+                : group
+            ] =
+              group === "minutes"
+                ? Number(value)
+                : value;
+
+          }
+        );
+
+      });
+
+
+    function nextOnboarding() {
+
+      if (state.onboardingStep === 1) {
+
+        const custom =
+          $("customGoal")
+            .value
+            .trim();
+
+        if (custom) {
+
+          state.onboardingData.goal =
+            custom;
+
+        }
+
+        if (!state.onboardingData.goal) {
+
+          toast(
+            "Goal tanlang yoki yozing.",
+            true
+          );
+
+          return;
+
+        }
+
+      }
+
+      if (state.onboardingStep === 2) {
+
+        if (
+          !state.onboardingData
+            .study_subject
+        ) {
+
+          toast(
+            "Subject tanlang.",
+            true
+          );
+
+          return;
+
+        }
+
+      }
+
+      if (state.onboardingStep === 3) {
+
+        if (
+          !state.onboardingData
+            .current_level
+        ) {
+
+          toast(
+            "Darajangizni tanlang.",
+            true
+          );
+
+          return;
+
+        }
+
+      }
+
+      if (state.onboardingStep < 4) {
+
+        state.onboardingStep++;
+
+        updateOnboardingUI();
+
+        return;
+
+      }
+
+      finishOnboarding();
+
+    }
+
+
+    function previousOnboarding() {
+
+      if (state.onboardingStep > 1) {
+
+        state.onboardingStep--;
+
+        updateOnboardingUI();
+
+      }
+
+    }
+
+
+    async function finishOnboarding() {
+
+      const interests =
+        $("interestsInput")
+          .value
+          .split(",")
+          .map(x => x.trim())
+          .filter(Boolean);
+
+      state.onboardingData.interests =
+        interests;
+
+      try {
+
+        await api(
+          "/onboarding",
+          {
+            method: "POST",
+            body: JSON.stringify(
+              state.onboardingData
+            )
+          }
+        );
+
+        $("onboardingScreen")
+          .classList.add("hidden");
+
+        toast(
+          "Onboarding completed! 🚀"
+        );
+
+        await loadDashboard();
+
+        navigate("dashboard");
+
+      } catch (error) {
+
+        toast(
+          error.message,
+          true
+        );
+
+      }
+
+    }
+
+
+    /* =========================================================
+       DASHBOARD
+    ========================================================= */
+
+    async function loadDashboard() {
+
+      try {
+
+        const [
+          weekly,
+          balance,
+          plan
+        ] =
+          await Promise.allSettled([
+
+            api("/progress/weekly/me"),
+
+            api("/coins/balance"),
+
+            api("/subscriptions/me")
+
+          ]);
+
+        if (
+          weekly.status === "fulfilled"
+        ) {
+
+          state.weekly =
+            weekly.value;
+
+          renderWeekly(
+            weekly.value
+          );
+
+        }
+
+        if (
+          balance.status === "fulfilled"
+        ) {
+
+          state.balance =
+            balance.value;
+
+          $("coinValue")
+            .textContent =
+            balance.value.coin_balance ?? 0;
+
+        }
+
+        if (
+          plan.status === "fulfilled"
+        ) {
+
+          state.plan =
+            plan.value;
+
+          $("planValue")
+            .textContent =
+            plan.value.tier || "Basic";
+
+        }
+
+        await loadOnboardingForDashboard();
+
+        await loadDailyTip();
+
+      } catch (error) {
+
+        console.error(error);
+
+      }
+
+    }
+
+
+    async function loadOnboardingForDashboard() {
+
+      try {
+
+        const data =
+          await api(
+            "/onboarding/me"
+          );
+
+        state.onboarding =
+          data;
+
+        if (data) {
+
+          $("dashboardGoal")
+            .textContent =
+            data.goal ||
+            "No goal selected.";
+
+          $("progressGoal")
+            .textContent =
+            data.goal || "—";
+
+          $("profileGoal")
+            .textContent =
+            data.goal || "—";
+
+          $("profileSubject")
+            .textContent =
+            data.study_subject || "—";
+
+          $("profileMinutes")
+            .textContent =
+            data.daily_study_minutes || 60;
+
+        }
+
+      } catch { }
+
+    }
+
+
+    function renderWeekly(data) {
+
+      const avg =
+        Number(
+          data.avg_progress_percent || 0
+        );
+
+      const streak =
+        Number(
+          data.streak_days || 0
+        );
+
+      $("weeklyValue")
+        .textContent =
+        Math.round(avg);
+
+      $("progressAverage")
+        .textContent =
+        Math.round(avg);
+
+      $("streakValue")
+        .textContent =
+        streak;
+
+      $("progressStreak")
+        .textContent =
+        streak;
+
+      $("progressRing")
+        .style
+        .setProperty(
+          "--progress",
+          Math.min(100, avg) + "%"
+        );
+
+      $("progressRingValue")
+        .textContent =
+        Math.round(avg) + "%";
+
+      const days =
+        data.days || [];
+
+      renderBars(
+        $("weekBars"),
+        days
+      );
+
+      renderBars(
+        $("progressWeekBars"),
+        days
+      );
+
+    }
+
+
+    function renderBars(container, days) {
+
+      if (!container)
+        return;
+
+      container.innerHTML = "";
+
+      const names =
+        ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+      for (let i = 0; i < 7; i++) {
+
+        const day =
+          days[i] || {};
+
+        const percent =
+          Number(
+            day.progress_percent || 0
+          );
+
+        const wrapper =
+          document.createElement("div");
+
+        wrapper.className =
+          "day-bar";
+
+        wrapper.innerHTML = `
+
+            <div
+                class="bar"
+                style="height:${Math.max(5, percent)}%"
+            ></div>
+
+            <small>
+                ${names[i]}
+            </small>
+
+        `;
+
+        container.appendChild(
+          wrapper
+        );
+
+      }
+
+    }
+
+
+    async function loadDailyTip() {
+
+      try {
+
+        const data =
+          await api(
+            "/ai-coach/daily-tip"
+          );
+
+        $("dailyTip")
+          .textContent =
+          data.tip ||
+          "Stay consistent today. Small progress matters.";
+
+      } catch {
+
+        $("dailyTip")
+          .textContent =
+          "Focus on one important task today and finish it before moving to the next.";
+
+      }
+
+    }
+
+
+    /* =========================================================
+       NAVIGATION
+    ========================================================= */
+
+    document
+      .querySelectorAll(".nav-btn")
+      .forEach(button => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            navigate(
+              button.dataset.page
+            );
+
+          }
+        );
+
+      });
+
+
+    function navigate(page) {
+
+      document
+        .querySelectorAll(".page")
+        .forEach(x =>
+          x.classList.remove(
+            "active"
+          )
+        );
+
+      const target =
+        $("page-" + page);
+
+      if (target) {
+
+        target.classList.add(
+          "active"
+        );
+
+      }
+
+      document
+        .querySelectorAll(".nav-btn")
+        .forEach(button => {
+
+          button.classList.toggle(
+            "active",
+            button.dataset.page === page
+          );
+
+        });
+
+      if (page === "profile") {
+
+        loadProfile();
+
+      }
+
+      if (page === "squads") {
+
+        loadSquads();
+
+      }
+
+      if (page === "plans") {
+
+        loadPlans();
+
+      }
+
+    }
+
+
+    /* =========================================================
+       AI COACH
+    ========================================================= */
+
+    async function sendAIMessage() {
+
+      const input =
+        $("aiInput");
+
+      const message =
+        input.value.trim();
+
+      if (!message)
+        return;
+
+      addAIMessage(
+        message,
+        true
+      );
+
+      input.value = "";
+
+      try {
+
+        const data =
+          await api(
+            "/ai-coach/chat",
+            {
+              method: "POST",
+              body: JSON.stringify({
+                message
+              })
+            }
+          );
+
+        addAIMessage(
+          data.reply ||
+          "I couldn't generate a response.",
+          false
+        );
+
+      } catch (error) {
+
+        addAIMessage(
+          "Sorry, something went wrong: " +
+          error.message,
+          false
+        );
+
+      }
+
+    }
+
+
+    function addAIMessage(
+      text,
+      isUser
+    ) {
+
+      const wrapper =
+        document.createElement("div");
+
+      wrapper.className =
+        "ai-message" +
+        (isUser ? " user" : "");
+
+      wrapper.innerHTML = `
+
+        <div class="ai-bubble">
+            ${escapeHTML(text)}
+        </div>
+
+    `;
+
+      $("aiMessages")
+        .appendChild(wrapper);
+
+      $("aiMessages")
+        .scrollTop =
+        $("aiMessages").scrollHeight;
+
+    }
+
+
+    /* =========================================================
+       SQUADS
+    ========================================================= */
+
+    function showCreateSquad() {
+
+      $("createSquadBox")
+        .classList.toggle("hidden");
+
+    }
+
+
+    async function createSquad() {
+
+      const name =
+        $("squadName")
+          .value
+          .trim();
+
+      const goal =
+        $("squadGoal")
+          .value
+          .trim();
+
+      if (!name) {
+
+        toast(
+          "Squad nomini kiriting.",
+          true
+        );
+
+        return;
+
+      }
+
+      try {
+
+        await api(
+          "/squads",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              name,
+              goal: goal || null
+            })
+          }
+        );
+
+        toast(
+          "Squad yaratildi! 🎉"
+        );
+
+        $("squadName").value = "";
+
+        $("squadGoal").value = "";
+
+        $("createSquadBox")
+          .classList.add("hidden");
+
+        loadSquads();
+
+      } catch (error) {
+
+        toast(
+          error.message,
+          true
+        );
+
+      }
+
+    }
+
+
+    async function loadSquads() {
+
+      /*
+         Sizning hozirgi backendda
+         barcha squadlarni qaytaruvchi
+         GET /squads endpointi yo'q.
+  
+         Shuning uchun mavjud squad IDlarini
+         frontenddan avtomatik topishning imkoni yo'q.
+  
+         Pastdagi kod GET /squads mavjud bo'lsa ishlaydi.
+      */
+
+      try {
+
+        const data =
+          await api("/squads");
+
+        state.squads =
+          Array.isArray(data)
+            ? data
+            : (
+              data.items || []
+            );
+
+        renderSquads();
+
+      } catch (error) {
+
+        $("squadGrid").innerHTML = `
+
+            <div class="card">
+
+                <div class="card-title">
+                    Your squads
+                </div>
+
+                <p style="color:var(--muted)">
+                    Squad list endpointi backendda
+                    hali mavjud emas.
+                </p>
+
+                <p style="
+                    color:var(--muted);
+                    margin-top:8px;
+                    font-size:13px;
+                ">
+                    Yangi squad yaratishingiz mumkin.
+                    Keyin backendga GET /squads endpointini
+                    qo‘shamiz.
+                </p>
+
+            </div>
+
+        `;
+
+      }
+
+    }
+
+
+    function renderSquads() {
+
+      const container =
+        $("squadGrid");
+
+      container.innerHTML = "";
+
+      if (!state.squads.length) {
+
+        container.innerHTML = `
+
+            <div class="card">
+
+                <div class="card-title">
+                    No squads yet
+                </div>
+
+                <p style="color:var(--muted)">
+                    Create your first squad.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+      }
+
+      state.squads.forEach(
+        squad => {
+
+          const card =
+            document.createElement("div");
+
+          card.className =
+            "card squad-card";
+
+          card.innerHTML = `
+
+                <div class="squad-name">
+                    ${escapeHTML(squad.name)}
+                </div>
+
+                <div class="squad-goal">
+                    ${escapeHTML(
+            squad.goal ||
+            "No goal"
+          )}
+                </div>
+
+                <div class="member-count">
+                    👥 ${squad.members?.length || "—"} members
+                </div>
+
+                <button
+                    class="primary-btn"
+                    style="margin-top:15px"
+                >
+                    Open Squad
+                </button>
+
+            `;
+
+          card
+            .querySelector("button")
+            .onclick = () =>
+              openSquad(
+                squad.id
+              );
+
+          container.appendChild(
+            card
+          );
+
+        }
+      );
+
+      renderChatSquadList();
+
+    }
+
+
+    async function openSquad(
+      squadId
+    ) {
+
+      try {
+
+        const squad =
+          await api(
+            `/squads/${squadId}`
+          );
+
+        state.activeSquad =
+          squad;
+
+        $("squadChatSection")
+          .classList.remove(
+            "hidden"
+          );
+
+        $("chatSquadName")
+          .textContent =
+          squad.name;
+
+        $("activeChatName")
+          .textContent =
+          squad.name;
+
+        $("activeChatGoal")
+          .textContent =
+          squad.goal || "";
+
+        renderChatSquadList();
+
+        await loadMessages(
+          squadId
+        );
+
+        connectWebSocket(
+          squadId
+        );
+
+        $("squadChatSection")
+          .scrollIntoView({
+            behavior: "smooth"
+          });
+
+      } catch (error) {
+
+        toast(
+          error.message,
+          true
+        );
+
+      }
+
+    }
+
+
+    function closeChat() {
+
+      if (state.socket) {
+
+        try {
+          state.socket.close();
+        } catch { }
+
+        state.socket = null;
+
+      }
+
+      $("squadChatSection")
+        .classList.add(
+          "hidden"
+        );
+
+    }
+
+
+    function renderChatSquadList() {
+
+      const container =
+        $("chatSquadList");
+
+      if (!container)
+        return;
+
+      container.innerHTML = "";
+
+      state.squads.forEach(
+        squad => {
+
+          const el =
+            document.createElement("div");
+
+          el.className =
+            "chat-squad-item" +
+            (
+              state.activeSquad &&
+                state.activeSquad.id === squad.id
+                ? " active"
+                : ""
+            );
+
+          el.innerHTML = `
+                <strong>
+                    ${escapeHTML(squad.name)}
+                </strong>
+
+                <div style="
+                    color:var(--muted);
+                    font-size:11px;
+                    margin-top:4px;
+                ">
+                    ${escapeHTML(
+            squad.goal || ""
+          )}
+                </div>
+            `;
+
+          el.onclick = () =>
+            openSquad(
+              squad.id
+            );
+
+          container.appendChild(
+            el
+          );
+
+        }
+      );
+
+    }
+
+
+    async function loadMessages(
+      squadId
+    ) {
+
+      try {
+
+        const messages =
+          await api(
+            `/squads/${squadId}/messages`
+          );
+
+        renderMessages(
+          messages || []
+        );
+
+      } catch (error) {
+
+        toast(
+          error.message,
+          true
+        );
+
+      }
+
+    }
+
+
+    function renderMessages(
+      messages
+    ) {
+
+      const container =
+        $("messages");
+
+      container.innerHTML = "";
+
+      if (!messages.length) {
+
+        container.innerHTML = `
+
+            <div style="
+                text-align:center;
+                color:var(--muted);
+                margin-top:50px;
+            ">
+                No messages yet.<br>
+                Start the conversation! 👋
+            </div>
+
+        `;
+
+        return;
+
+      }
+
+      messages.forEach(
+        addMessageToUI
+      );
+
+      container.scrollTop =
+        container.scrollHeight;
+
+    }
+
+
+    function addMessageToUI(
+      message
+    ) {
+
+      const isMine =
+        state.user &&
+        Number(message.user_id) ===
+        Number(state.user.id);
+
+      const wrapper =
+        document.createElement("div");
+
+      wrapper.className =
+        "message" +
+        (isMine ? " mine" : "");
+
+      wrapper.innerHTML = `
+
+        <div class="avatar">
+            ${escapeHTML(
+        (
+          message.full_name ||
+          "?"
+        ).charAt(0)
+      )}
+        </div>
+
+        <div class="message-content">
+
+            <div class="message-name">
+                ${escapeHTML(
+        message.full_name ||
+        "Student"
+      )}
+            </div>
+
+            <div class="message-bubble">
+                ${escapeHTML(
+        message.message
+      )}
+            </div>
+
+        </div>
+
+    `;
+
+      $("messages")
+        .appendChild(wrapper);
+
+      $("messages")
+        .scrollTop =
+        $("messages").scrollHeight;
+
+    }
+
+
+    async function sendMessage() {
+
+      if (!state.activeSquad) {
+
+        toast(
+          "Avval squad tanlang.",
+          true
+        );
+
+        return;
+
+      }
+
+      const input =
+        $("messageInput");
+
+      const message =
+        input.value.trim();
+
+      if (!message)
+        return;
+
+      /*
+         WebSocket connected bo‘lsa,
+         real-time yuboramiz.
+      */
+
+      if (
+        state.socket &&
+        state.socket.readyState ===
+        WebSocket.OPEN
+      ) {
+
+        state.socket.send(
+          message
+        );
+
+        input.value = "";
+
+        return;
+
+      }
+
+      /*
+         WebSocket ishlamasa,
+         HTTP fallback.
+      */
+
+      try {
+
+        const data =
+          await api(
+            `/squads/${state.activeSquad.id}/messages`,
+            {
+              method: "POST",
+              body: JSON.stringify({
+                message
+              })
+            }
+          );
+
+        addMessageToUI(
+          data
+        );
+
+        input.value = "";
+
+      } catch (error) {
+
+        toast(
+          error.message,
+          true
+        );
+
+      }
+
+    }
+
+
+    /* =========================================================
+       WEBSOCKET
+    ========================================================= */
+
+    function connectWebSocket(
+      squadId
+    ) {
+
+      if (state.socket) {
+
+        try {
+          state.socket.close();
+        } catch { }
+
+      }
+
+      /*
+         https -> wss
+         http -> ws
+      */
+
+      const wsBase =
+        API_BASE
+          .replace(
+            /^https:/,
+            "wss:"
+          )
+          .replace(
+            /^http:/,
+            "ws:"
+          );
+
+      const url =
+        `${wsBase}/ws/squads/${squadId}?token=${encodeURIComponent(state.token)}`;
+
+      try {
+
+        const socket =
+          new WebSocket(url);
+
+        state.socket =
+          socket;
+
+        socket.onopen = () => {
+
+          console.log(
+            "Squad WebSocket connected"
+          );
+
+        };
+
+        socket.onmessage =
+          event => {
+
+            try {
+
+              const data =
+                JSON.parse(
+                  event.data
+                );
+
+              addMessageToUI(
+                data
+              );
+
+            } catch (error) {
+
+              console.error(
+                error
+              );
+
+            }
+
+          };
+
+        socket.onerror =
+          error => {
+
+            console.error(
+              "WebSocket error",
+              error
+            );
+
+          };
+
+        socket.onclose = () => {
+
+          console.log(
+            "Squad WebSocket disconnected"
+          );
+
+        };
+
+      } catch (error) {
+
+        console.error(
+          error
+        );
+
+      }
+
+    }
+
+
+    /* =========================================================
+       PROFILE
+    ========================================================= */
+
+    async function loadProfile() {
+
+      try {
+
+        const data =
+          await api(
+            "/profile/me"
+          );
+
+        $("profileName")
+          .textContent =
+          data.full_name;
+
+        $("profileEmail")
+          .textContent =
+          data.email || "—";
+
+        $("profileGoal")
+          .textContent =
+          data.goal || "—";
+
+        $("profileSubject")
+          .textContent =
+          data.study_subject || "—";
+
+        $("profileMinutes")
+          .textContent =
+          data.daily_study_minutes || 60;
+
+        $("profilePlan")
+          .textContent =
+          data.is_premium
+            ? "Premium"
+            : data.subscription_tier;
+
+        $("editFullName")
+          .value =
+          data.full_name;
+
+      } catch (error) {
+
+        toast(
+          error.message,
+          true
+        );
+
+      }
+
+    }
+
+
+    async function updateProfile() {
+
+      const full_name =
+        $("editFullName")
+          .value
+          .trim();
+
+      if (!full_name) {
+
+        toast(
+          "Ismni kiriting.",
+          true
+        );
+
+        return;
+
+      }
+
+      try {
+
+        const params =
+          new URLSearchParams();
+
+        params.append(
+          "full_name",
+          full_name
+        );
+
+        const data =
+          await api(
+            `/profile/me?${params.toString()}`,
+            {
+              method: "PUT"
+            }
+          );
+
+        toast(
+          "Profil yangilandi! ✅"
+        );
+
+        await loadUser();
+
+        await loadProfile();
+
+      } catch (error) {
+
+        toast(
+          error.message,
+          true
+        );
+
+      }
+
+    }
+
+
+    /* =========================================================
+       PLANS
+    ========================================================= */
+
+    async function loadPlans() {
+
+      try {
+
+        const plans =
+          await api(
+            "/subscriptions/plans"
+          );
+
+        renderPlans(
+          Array.isArray(plans)
+            ? plans
+            : plans.items || []
+        );
+
+      } catch (error) {
+
+        $("plansGrid").innerHTML = `
+
+            <div class="card">
+
+                <div class="card-title">
+                    Plans
+                </div>
+
+                <p style="color:var(--muted)">
+                    ${escapeHTML(
+          error.message
+        )}
+                </p>
+
+            </div>
+
+        `;
+
+      }
+
+    }
+
+
+    function renderPlans(plans) {
+
+      const container =
+        $("plansGrid");
+
+      container.innerHTML = "";
+
+      if (!plans.length) {
+
+        container.innerHTML = `
+            <div class="card">
+                No plans available.
+            </div>
+        `;
+
+        return;
+
+      }
+
+      plans.forEach(
+        plan => {
+
+          const card =
+            document.createElement("div");
+
+          card.className =
+            "card";
+
+          card.innerHTML = `
+
+                <div style="font-size:25px">
+                    💎
+                </div>
+
+                <h2 style="
+                    font-family:Sora;
+                    margin:10px 0;
+                ">
+                    ${escapeHTML(
+            plan.name ||
+            plan.tier
+          )}
+                </h2>
+
+                <div style="
+                    font-size:28px;
+                    font-family:Sora;
+                    margin-bottom:15px;
+                ">
+                    $${plan.price_usd ?? 0}
+                </div>
+
+                <div class="info-list">
+
+                    ${(plan.features || [])
+              .map(feature => `
+                            <div class="info-row">
+                                <span>✓ ${escapeHTML(feature)}</span>
+                            </div>
+                        `)
+              .join("")
+            }
+
+                </div>
+
+                <button
+                    class="primary-btn"
+                    style="margin-top:18px"
+                    onclick="checkoutPlan('${escapeHTML(plan.tier)}')"
+                >
+                    Choose plan
+                </button>
+
+            `;
+
+          container.appendChild(
+            card
+          );
+
+        }
+      );
+
+    }
+
+
+    async function checkoutPlan(
+      tier
+    ) {
+
+      try {
+
+        const data =
+          await api(
+            "/subscriptions/checkout",
+            {
+              method: "POST",
+              body: JSON.stringify({
+                tier
+              })
+            }
+          );
+
+        if (data.checkout_url) {
+
+          window.open(
+            data.checkout_url,
+            "_blank"
+          );
+
+        }
+
+      } catch (error) {
+
+        toast(
+          error.message,
+          true
+        );
+
+      }
+
+    }
+
+
+    /* =========================================================
+       INIT
+    ========================================================= */
+
+    async function init() {
+
+      if (!state.token)
+        return;
+
+      try {
+
+        await enterApp();
+
+      } catch (error) {
+
+        console.error(
+          error
+        );
+
+        logout();
+
+      }
+
+    }
+
+    init();
+
+  </script>
+
+</body>
+
+</html>
